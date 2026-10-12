@@ -5,10 +5,20 @@ module Api
 
       # GET /api/v1/geeks
       def index
-        @geeks = Geek.all
+        @geeks = Geek.includes(:applies)
         @geeks = @geeks.where("name ILIKE ?", "%#{params[:name]}%") if params[:name].present?
         @geeks = @geeks.where("stack ILIKE ?", "%#{params[:stack]}%") if params[:stack].present?
-        render json: { geeks: @geeks }
+        @geeks = paginate(@geeks)
+
+        render json: {
+          geeks: @geeks,
+          meta: {
+            current_page: @geeks.current_page,
+            total_pages: @geeks.total_pages,
+            total_count: @geeks.total_count,
+            per_page: @geeks.limit_value
+          }
+        }
       end
 
       # GET /api/v1/geeks/:id

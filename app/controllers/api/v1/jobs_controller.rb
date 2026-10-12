@@ -7,13 +7,23 @@ module Api
       # GET /api/v1/companies/:company_id/jobs
       def index
         if params[:company_id]
-          @jobs = Company.find(params[:company_id]).jobs
+          @jobs = Job.includes(:company, :applies)
         else
           @jobs = Job.all
         end
         @jobs = @jobs.where("name ILIKE ?", "%#{params[:name]}%") if params[:name].present?
         @jobs = @jobs.where("place ILIKE ?", "%#{params[:place]}%") if params[:place].present?
-        render json: { jobs: @jobs }
+        @jobs = paginate(@jobs)
+
+        render json: {
+          jobs: @jobs,
+          meta: {
+            current_page: @jobs.current_page,
+            total_pages: @jobs.total_pages,
+            total_count: @jobs.total_count,
+            per_page: @jobs.limit_value
+          }
+        }
       end
 
       # GET /api/v1/jobs/:id

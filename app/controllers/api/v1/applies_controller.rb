@@ -8,7 +8,7 @@ module Api
       # GET /api/v1/geeks/:geek_id/applies
       def index
         if params[:job_id]
-          @applies = Job.find(params[:job_id]).applies
+          @applies = Apply.includes(:job, :geek)
         elsif params[:geek_id]
           @applies = Geek.find(params[:geek_id]).applies
         else
@@ -16,7 +16,17 @@ module Api
         end
         @applies = @applies.where(read: params[:read]) if params[:read].present?
         @applies = @applies.where(invited: params[:invited]) if params[:invited].present?
-        render json: { applies: @applies }
+        @applies = paginate(@applies)
+
+        render json: {
+          applies: @applies,
+          meta: {
+            current_page: @applies.current_page,
+            total_pages: @applies.total_pages,
+            total_count: @applies.total_count,
+            per_page: @applies.limit_value
+          }
+        }
       end
 
       # GET /api/v1/applies/:id

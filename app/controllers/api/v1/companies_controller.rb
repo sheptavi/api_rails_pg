@@ -5,15 +5,25 @@ module Api
 
       # GET /api/v1/companies
       def index
-        @companies = Company.where(deleted: false)
+        @companies = Company.includes(:jobs).where(deleted: false)
         @companies = @companies.where("name ILIKE ?", "%#{params[:name]}%") if params[:name].present?
         @companies = @companies.where("location ILIKE ?", "%#{params[:location]}%") if params[:location].present?
-        render json: { companies: @companies }
+        @companies = paginate(@companies)
+
+        render json: {
+          companies: ActiveModelSerializers::SerializableResource.new(@companies, each_serializer: CompanySerializer),
+          meta: {
+            current_page: @companies.current_page,
+            total_pages: @companies.total_pages,
+            total_count: @companies.total_count,
+            per_page: @companies.limit_value
+          }
+        }
       end
 
       # GET /api/v1/companies/:id
       def show
-        render json: { company: @company }
+        render json: @company, serializer: CompanySerializer, root: :company
       end
 
       # POST /api/v1/companies
