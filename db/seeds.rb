@@ -1,8 +1,8 @@
 # Очищаем старые данные
-Company.delete_all
+Apply.delete_all
 Job.delete_all
 Geek.delete_all
-Apply.delete_all
+Company.delete_all
 
 # Сбрасываем счётчики ID (для PostgreSQL)
 ActiveRecord::Base.connection.reset_pk_sequence!('companies')
