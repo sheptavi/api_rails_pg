@@ -21,6 +21,9 @@ Rails.application.routes.draw do
     end
   end
 
+ post '/graphql', to: 'graphql#execute'
+ get '/graphql', to: 'graphql#execute'
+
   # Catch-all для 404
   match "/*path", to: "application#catch_404", via: :all
 end
