@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  # Маршрут для GraphiQL
+  if Rails.env.development?
+    mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
+  end
+
   # API namespace
   namespace :api do
     namespace :v1 do
@@ -21,8 +26,8 @@ Rails.application.routes.draw do
     end
   end
 
- post '/graphql', to: 'graphql#execute'
- get '/graphql', to: 'graphql#execute'
+  post '/graphql', to: 'graphql#execute'
+  get '/graphql', to: 'graphql#execute'
 
   # Catch-all для 404
   match "/*path", to: "application#catch_404", via: :all

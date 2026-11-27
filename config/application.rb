@@ -1,5 +1,5 @@
 require_relative "boot"
-
+require "sprockets/railtie"
 require "rails/all"
 
 # Require the gems listed in Gemfile, including any gems
@@ -27,6 +27,6 @@ module ApiRailsPg
     # Only loads a smaller set of middleware suitable for API only apps.
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
-    config.api_only = true
+   # config.api_only = true
   end
 end
